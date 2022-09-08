@@ -1,0 +1,4 @@
+github.com/jeffotoni/gconcat v0.0.12 h1:3l0OOudzBnPAM0Mac/tHgRO5naNp2WDH69FbDzctRAI=
+github.com/jeffotoni/gconcat v0.0.12/go.mod h1:aGMsLIjZO8qEYz2DyLeXLl4q/vq0T24ROwIjlxsQ1dE=
+gitlab.engdb.com.br/gmid/sdk/core/fmts v0.0.0-20220808134917-0f85abb5afc6 h1:YQsGoI36c9ujmaytwvSmad2MPOkFyXJdvNwnRjEwaDE=
+gitlab.engdb.com.br/gmid/sdk/core/fmts v0.0.0-20220808134917-0f85abb5afc6/go.mod h1:eLSJ7VRsVQkbAYjTCfY5SzI5vbsTvaLoQTSUbkUyucM=
