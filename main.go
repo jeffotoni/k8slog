@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -102,55 +103,91 @@ func main() {
 
 	f.Close()
 
-	t := table.NewWriter()
-	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"#", "NameSpace", "POD"})
+	//ShowNameSpacePods(nspaceTotal, mnameSpace)
+	ShowTotalServicePods(nspaceTotal, mnameSpace)
+	println("")
 
-	for _, n := range nspaceTotal {
-		NamePod(n, t, mnameSpace)
-	}
+}
+
+func ShowTotalServicePods(nspaceTotal, mnameSpace map[string]string) {
+	t := table.NewWriter()
+	t = table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+	t.AppendHeader(table.Row{"#", "NameSpace", "Service", "Pods"})
+
+	TotalPods(t, nspaceTotal, mnameSpace)
 
 	t.AppendSeparator()
 	t.AppendFooter(table.Row{"", "Total", len(mnameSpace), ""})
 	t.Render()
-	println("")
-	t = table.NewWriter()
-	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"#", "NameSpace", "Pods", "File/CSV"})
 
-	for i, n := range nspaceTotal {
-		t.AppendRows([]table.Row{
-			{i, n, TotalPods(n, mnameSpace), fmts.ConcatStr("File.", n, ".csv")},
-		})
-	}
+}
+
+func ShowNameSpacePods(nspaceTotal, mnameSpace map[string]string) {
+	t := table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+	t.AppendHeader(table.Row{"#", "NameSpace", "POD"})
+
+	NamePod(t, nspaceTotal, mnameSpace)
 
 	t.AppendSeparator()
 	t.AppendFooter(table.Row{"", "Total", len(mnameSpace), ""})
 	t.Render()
 }
 
-func TotalPods(space string, spacePods map[string]string) (i int) {
+func TotalPods(t table.Writer, nspaceTotal, mnameSpace map[string]string) {
+	for i, n := range nspaceTotal {
+		t.AppendRows([]table.Row{
+			{i, n, sumService(n, mnameSpace), sumPods(n, mnameSpace)},
+		})
+	}
+}
+
+func sumService(space string, spacePods map[string]string) (i int) {
+	var services []string
 	for _, spacePods := range spacePods {
 		v := strings.Split(spacePods, "#")
 		nspace := v[0]
-		if nspace == space {
+		status := strings.ToLower(v[3])
+		if nspace == space && status == "running" {
+			i++
+			npod := strings.TrimSpace(v[1])
+			re := regexp.MustCompile(`([a-zA-Z0-9_-]+)-v([0-9]+)`)
+			match := re.FindStringSubmatch(npod)
+			if len(match) > 0 {
+				services = append(services, match[0])
+			}
+		}
+	}
+	i = len(services)
+	return
+}
+
+func sumPods(space string, spacePods map[string]string) (i int) {
+	for _, spacePods := range spacePods {
+		v := strings.Split(spacePods, "#")
+		nspace := v[0]
+		status := strings.ToLower(v[3])
+		if nspace == space && status == "running" {
 			i++
 		}
 	}
 	return
 }
 
-func NamePod(space string, t table.Writer, spacePods map[string]string) {
-	var j int
-	for _, spacePods := range spacePods {
-		v := strings.Split(spacePods, "#")
-		nspace := v[0]
-		if nspace == space {
-			j++
-			npod := v[1]
-			t.AppendRows([]table.Row{
-				{j, nspace, npod},
-			})
+func NamePod(t table.Writer, nspaceTotal, spacePods map[string]string) {
+	for _, space := range nspaceTotal {
+		var j int
+		for _, spacePods := range spacePods {
+			v := strings.Split(spacePods, "#")
+			nspace := v[0]
+			if nspace == space {
+				j++
+				npod := v[1]
+				t.AppendRows([]table.Row{
+					{j, nspace, npod},
+				})
+			}
 		}
 	}
 }
