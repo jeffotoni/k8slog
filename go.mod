@@ -4,7 +4,9 @@ go 1.19
 
 require (
 	github.com/jedib0t/go-pretty/v6 v6.3.8
+	github.com/jeffotoni/gcolor v1.0.9
 	github.com/jeffotoni/gconcat v0.0.12
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (

@@ -8,12 +8,17 @@ import (
 	"strings"
 
 	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/jeffotoni/k8slog/sdk/config"
 	"github.com/jeffotoni/k8slog/sdk/fmts"
 )
 
 // dasboard
 // namespace | pods | cpu | mem
 // namespace | servico | qnt pod | cpu | mem
+
+var (
+	c = config.Config()
+)
 
 func main() {
 
@@ -32,24 +37,14 @@ func main() {
 	fscan := bufio.NewScanner(f)
 	fscan.Split(bufio.ScanLines)
 
-	mn := map[string]string{
-		//"kafka":        "kafka",
-		//"kube-system":  "kube-system",
-		"m-prd": "m-prd",
-		//"rabbitmq-prd": "rabbitmq-prd",
-		"s-prd": "s-prd",
-		//"velero":       "velero",
-		//"default": "default",
-		//"oms":          "oms",
-		"prd":    "prd",
-		"e-prd":  "e-prd",
-		"gm-prd": "gm-prd",
-		"f-prd":  "f-prd",
-		//"log":          "log",
+	//fmt.Printf("\n%t\n", c.Cluster.NameSpace)
+	//return
+
+	var mn = make(map[string]string)
+	for _, v := range c.Cluster.NameSpace {
+		mn[v] = v
 	}
 
-	//var namespacetmp string
-	//var i int = 0 Running
 	// NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
 	for fscan.Scan() {
 		line := fscan.Text()
