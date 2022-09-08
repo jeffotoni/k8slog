@@ -6,16 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jeffotoni/sdk/fmts"
+	"github.com/jeffotoni/k8slog/sdk/fmts"
 )
-
-type Cluster struct {
-	NameSpace string
-}
-
-type Pods struct {
-	Name string
-}
 
 func main() {
 
