@@ -6,8 +6,13 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jeffotoni/k8slog/sdk/fmts"
 )
+
+// dasboard
+// namespace | pods | cpu | mem
+// namespace | servico | qnt pod | cpu | mem
 
 func main() {
 
@@ -35,15 +40,15 @@ func main() {
 		//"velero":       "velero",
 		//"default": "default",
 		//"oms":          "oms",
-		"prd": "prd",
-		//"e-prd":        "e-prd",
-		//"gm-prd":       "gm-prd",
-		//"f-prd":        "f-prd",
+		"prd":    "prd",
+		"e-prd":  "e-prd",
+		"gm-prd": "gm-prd",
+		"f-prd":  "f-prd",
 		//"log":          "log",
 	}
 
 	//var namespacetmp string
-	//var i int = 0
+	//var i int = 0 Running
 	// NAMESPACE | NAME | READY | STATUS | RESTARTS | AGE
 	for fscan.Scan() {
 		line := fscan.Text()
@@ -91,58 +96,61 @@ func main() {
 
 			mnameSpace[fmts.ConcatStr(pns, "#", pname)] = fmts.ConcatStr(pns, "#", pname, "#", piready, "#", pistatus, "#", pirestarts, "#", piage)
 			nspaceTotal[pns] = pns
-			// fmt.Println("v:", pns)
-			// mname[pname] = pname
-			// fmt.Println("name:", pname)
-			// i++
-			// if i == 5 {
-			// 	break
-			// }
 
-			//namespacetmp = pname
 		}
 	}
 
 	f.Close()
 
-	// data := [][]string{}
-	for _, n := range nspaceTotal {
-		// data = [][]string{
-		// 	[]string{n, TotalPods(n, mnameSpace)},
-		// }
+	t := table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+	t.AppendHeader(table.Row{"#", "NameSpace", "POD"})
 
-		//fmt.Println("namespace:", is, " total pods:", len(v))
-		fmt.Println("namespace:", n, " pods:", TotalPods(n, mnameSpace))
+	for _, n := range nspaceTotal {
+		NamePod(n, t, mnameSpace)
 	}
 
-	// table := tablewriter.NewWriter(os.Stdout)
-	// table.SetHeader([]string{"Date", "Description", "CV2", "Amount"})
-	// table.SetFooter([]string{"", "", "Total NameSpace", TotalPods(n, mnameSpace)}) // Add Footer
-	// table.SetBorder(false)                                                         // Set Border to false
-	// table.AppendBulk(data)                                                         // Add Bulk Data
-	// table.Render()
+	t.AppendSeparator()
+	t.AppendFooter(table.Row{"", "Total", len(mnameSpace), ""})
+	t.Render()
+	println("")
+	t = table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+	t.AppendHeader(table.Row{"#", "NameSpace", "Pods", "File/CSV"})
 
-	fmt.Println("TOTAL NAMESPACE:", len(mnameSpace))
-	//fmt.Println("NAME/PODS:", len(mname))
+	for i, n := range nspaceTotal {
+		t.AppendRows([]table.Row{
+			{i, n, TotalPods(n, mnameSpace), fmts.ConcatStr("File.", n, ".csv")},
+		})
+	}
 
-	// NAMESPACE   |       POD                        | READY   |  STATUS            | RESTARTS  | AGE
-	// -----------+--------------------------+-------+----------------------------------------------------
-	//  m-prd | r-product-details-v2-58b44bf4bb-v8tvc |  1/1     | Running           |  0        |  8h
-	//  m-prd | r-product-details-v2-58b44bf4bb-v8tvc |  1/1     | Running           |  0        |  8h
-	// -----------+--------------------------+-------+----------------------------------------------------
-	// 										TOTAL NAMESPACE | 2025
-	// 									  --------+----------
-
+	t.AppendSeparator()
+	t.AppendFooter(table.Row{"", "Total", len(mnameSpace), ""})
+	t.Render()
 }
 
 func TotalPods(space string, spacePods map[string]string) (i int) {
 	for _, spacePods := range spacePods {
 		v := strings.Split(spacePods, "#")
-		for _, nspace := range v {
-			if nspace == space {
-				i++
-			}
+		nspace := v[0]
+		if nspace == space {
+			i++
 		}
 	}
 	return
+}
+
+func NamePod(space string, t table.Writer, spacePods map[string]string) {
+	var j int
+	for _, spacePods := range spacePods {
+		v := strings.Split(spacePods, "#")
+		nspace := v[0]
+		if nspace == space {
+			j++
+			npod := v[1]
+			t.AppendRows([]table.Row{
+				{j, nspace, npod},
+			})
+		}
+	}
 }
