@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -15,7 +17,8 @@ import (
 // dasboard
 // namespace | pods | cpu | mem
 // namespace | servico | qnt pod | cpu | mem
-
+// kubectl get hpa -n <namespace> <pod>
+// kubectl top pod <pod> --use-protocol-buffers -n <namespace>
 var (
 	c = config.Config()
 )
@@ -100,6 +103,7 @@ func main() {
 
 	//ShowNameSpacePods(nspaceTotal, mnameSpace)
 	ShowTotalServicePods(nspaceTotal, mnameSpace)
+	// progress.Show()
 	println("")
 
 }
@@ -108,7 +112,7 @@ func ShowTotalServicePods(nspaceTotal, mnameSpace map[string]string) {
 	t := table.NewWriter()
 	t = table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"#", "NameSpace", "Service", "Pods"})
+	t.AppendHeader(table.Row{"#", "NameSpace", "Service", "Pods", "CPU", "MEM"})
 
 	TotalPods(t, nspaceTotal, mnameSpace)
 
@@ -133,10 +137,48 @@ func ShowNameSpacePods(nspaceTotal, mnameSpace map[string]string) {
 
 func TotalPods(t table.Writer, nspaceTotal, mnameSpace map[string]string) {
 	for i, n := range nspaceTotal {
+		cpu, memory := sumCpu(n, mnameSpace)
 		t.AppendRows([]table.Row{
-			{i, n, sumService(n, mnameSpace), sumPods(n, mnameSpace)},
+			{i, n, sumService(n, mnameSpace), sumPods(n, mnameSpace), cpu, memory},
 		})
 	}
+}
+
+func sumCpu(space string, spacePods map[string]string) (scpu, smemory string) {
+	//var services = make(map[string]string)
+	var cpu, memory int
+	for _, spacePods := range spacePods {
+		v := strings.Split(spacePods, "#")
+		nspace := v[0]
+		status := strings.ToLower(v[3])
+		if nspace == space && status == "running" {
+			npod := strings.TrimSpace(v[1])
+			runCMD(nspace, npod)
+			// execut kubectl get pod
+			cpu = cpu + 1
+			memory = memory + 1
+		}
+	}
+
+	scpu = strconv.Itoa(cpu)
+	scpu = fmts.ConcatStr(scpu, "m")
+
+	smemory = strconv.Itoa(memory)
+	smemory = fmts.ConcatStr(smemory, "Mi")
+	return
+}
+
+func runCMD(namespace, pod string) (sout string) {
+	//var stdout, stderr bytes.Buffer
+	command := fmts.ConcatStr("kubectl top pod ", pod, " --use-protocol-buffers -n ", namespace)
+	out, err := exec.Command(command).Output()
+	if err != nil {
+		//fmt.Printf("error::::::", err.Error())
+		return
+	}
+	sout = string(out)
+	return
+	//println("stdout.String():", string(out))
 }
 
 func sumService(space string, spacePods map[string]string) (i int) {
