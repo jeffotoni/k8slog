@@ -114,6 +114,7 @@ func ShowTotalServicePods(nspaceTotal, mnameSpace map[string]string) {
 
 	t.AppendSeparator()
 	t.AppendFooter(table.Row{"", "Total", len(mnameSpace), ""})
+	t.SetStyle(table.StyleColoredBright)
 	t.Render()
 
 }
@@ -139,7 +140,7 @@ func TotalPods(t table.Writer, nspaceTotal, mnameSpace map[string]string) {
 }
 
 func sumService(space string, spacePods map[string]string) (i int) {
-	var services []string
+	var services = make(map[string]string)
 	for _, spacePods := range spacePods {
 		v := strings.Split(spacePods, "#")
 		nspace := v[0]
@@ -150,7 +151,9 @@ func sumService(space string, spacePods map[string]string) (i int) {
 			re := regexp.MustCompile(`([a-zA-Z0-9_-]+)-v([0-9]+)`)
 			match := re.FindStringSubmatch(npod)
 			if len(match) > 0 {
-				services = append(services, match[0])
+				//println("pod:", match[0])
+				//services = append(services, match[0])
+				services[match[0]] = match[0]
 			}
 		}
 	}
