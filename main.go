@@ -3,29 +3,40 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/jedib0t/go-pretty/table"
+	"github.com/jeffotoni/k8slog/sdk/config"
+	"gitlab.engdb.com.br/gmid/sdk/core/env"
 	"gitlab.engdb.com.br/gmid/sdk/core/fmts"
+
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/clientcmd"
 	metrics "k8s.io/metrics/pkg/client/clientset/versioned"
 )
 
-func main() {
-	config, _ := clientcmd.BuildConfigFromFlags("", os.Getenv("KUBE_CONFIG"))
-	mc, _ := metrics.NewForConfig(config)
+var (
+	KUBE_CONFIG = env.GetString("KUBE_CONFIG", "~/.kube/config")
+	SHOW_TABLE  = env.GetBool("SHOW_TABLE", true)
 
-	var nameSpace = []string{
-		"f-prd",
-		"e-prd",
-		"m-prd",
-		"s-prd",
-		"gm-prd",
-		"prd",
+	c = config.Config()
+)
+
+func main() {
+	config, err := clientcmd.BuildConfigFromFlags("", KUBE_CONFIG)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	mc, err := metrics.NewForConfig(config)
+	if err != nil {
+		log.Println(err)
+		return
 	}
 
 	var totalItem = make(map[string]string)
@@ -34,7 +45,7 @@ func main() {
 	var tCpus int64
 	var tMemory int64
 
-	for _, space := range nameSpace {
+	for _, space := range c.Cluster.NameSpace {
 
 		var mservice = make(map[string]string)
 		var mcpu int64
@@ -54,13 +65,6 @@ func main() {
 					continue
 				}
 
-				//memQuantity = memQuantity / 1024 / 1024
-				// msg := fmt.Sprintf("NameSpace: %s - Container Name: %s \n CPU usage: %d \n Memory usage: %d Mi",
-				// 	podMetric.ObjectMeta.Namespace,
-				// 	podMetric.ObjectMeta.Name,
-				// 	cpuQuantity,
-				// 	memQuantity)
-
 				mcpu += cpuQuantity
 				mmemory += memQuantity
 
@@ -69,8 +73,6 @@ func main() {
 				if len(match) > 0 {
 					mservice[match[0]] = match[0]
 				}
-
-				// fmt.Println(msg)
 			}
 
 			mmemoryon := mmemory / 1024 / 1024
@@ -120,7 +122,9 @@ func main() {
 
 	//t.AppendSeparator()
 	t.AppendFooter(table.Row{"", "TOTAL", tService, tPods, tCpusStr, tMemoryStr})
-	t.SetStyle(table.StyleColoredBright)
+	if SHOW_TABLE {
+		t.SetStyle(table.StyleColoredBright)
+	}
 	t.Render()
 
 }

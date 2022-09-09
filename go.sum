@@ -216,6 +216,8 @@ github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9de
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
+gitlab.engdb.com.br/gmid/sdk/core/env v0.0.0-20220706182804-fdecd8eef495 h1:vLs3Q0wdjwPDU8ZqKavtlyxq/W20CNrKtZ0UJm9TLyU=
+gitlab.engdb.com.br/gmid/sdk/core/env v0.0.0-20220706182804-fdecd8eef495/go.mod h1:g+9hFNS5rOyOQue/pcgKovFdbLSwcgt0L+HjPjWIXt0=
 gitlab.engdb.com.br/gmid/sdk/core/fmts v0.0.0-20220808134917-0f85abb5afc6 h1:YQsGoI36c9ujmaytwvSmad2MPOkFyXJdvNwnRjEwaDE=
 gitlab.engdb.com.br/gmid/sdk/core/fmts v0.0.0-20220808134917-0f85abb5afc6/go.mod h1:eLSJ7VRsVQkbAYjTCfY5SzI5vbsTvaLoQTSUbkUyucM=
 go.mongodb.org/mongo-driver v1.10.0 h1:UtV6N5k14upNp4LTduX0QCufG124fSu25Wz9tu94GLg=

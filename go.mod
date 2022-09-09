@@ -7,6 +7,7 @@ require (
 	github.com/jedib0t/go-pretty/v6 v6.3.8
 	github.com/jeffotoni/gcolor v1.0.9
 	github.com/jeffotoni/gconcat v0.0.12
+	gitlab.engdb.com.br/gmid/sdk/core/env v0.0.0-20220706182804-fdecd8eef495
 	gitlab.engdb.com.br/gmid/sdk/core/fmts v0.0.0-20220808134917-0f85abb5afc6
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.25.0
