@@ -1,3 +1,2 @@
 cluster:
-  namespace: ["prd", "s-prd","m-prd","e-prd","gm-prd","f-prd"]
-  #namespace: ["prd"]
+  namespace: ["default"]

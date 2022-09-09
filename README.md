@@ -4,7 +4,7 @@ k8slog is a tool for aggregating the values we get when running kubectl get pod 
 
 We have a very simple view, but it is just the beginning, we can extend it to different needs we have when we have several nodes and many services and pods in the Kubernetes cluster.
 
-### Config
+### CONFIG
 
 Here we have only two environment variables
 
@@ -17,13 +17,15 @@ $ export KUBE_CONFIG=~/.kube/config
 ```bash
 $ export SHOW_TABLE=true
 ```
-![show table](./img/k8s.png "show table").
+![show table](./img/k8s.png "show table").v
 
 ```bash
 $ export SHOW_TABLE=false
 ```
-![show table](./img/k8s_table.png "show table").
+![show table](./img/k8s_table.png "show table 2").
 
+
+### INSTALL
 To run k8slog just install it if you have Go, or compile it.
 ```bash
 $ go install github.com/jeffotoni/k8slog@latest
