@@ -17,12 +17,12 @@ $ export KUBE_CONFIG=~/.kube/config
 ```bash
 $ export SHOW_TABLE=true
 ```
-![show table](./k8s.png "show table").
+![show table](./img/k8s.png "show table").
 
 ```bash
 $ export SHOW_TABLE=false
 ```
-![show table](./k8s_table.png "show table").
+![show table](./img/k8s_table.png "show table").
 
 To run k8slog just install it if you have Go, or compile it.
 ```bash
