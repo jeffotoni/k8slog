@@ -17,12 +17,12 @@ $ export KUBE_CONFIG=~/.kube/config
 ```bash
 $ export SHOW_TABLE=true
 ```
-![show table](./img/k8s.png "show table").v
+![show table](./img/k8s.png "show table")
 
 ```bash
 $ export SHOW_TABLE=false
 ```
-![show table](./img/k8s_table.png "show table 2").
+![show table](./img/k8s_table.png "show table 2")
 
 
 ### INSTALL
