@@ -6,6 +6,14 @@ We have a very simple view, but it is just the beginning, we can extend it to di
 
 ### CONFIG
 
+We have a config.yaml file, where we have the namespaces that we would like to present from the cluster.
+
+```bash
+$ cat config.yaml
+cluster:
+  namespace: ["default", "your-namespace"]
+```
+
 Here we have only two environment variables
 
 **KUBE_CONFIG** this is your kube config path so we can access your kubernetes cluster
