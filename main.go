@@ -22,6 +22,8 @@ func main() {
 	var nameSpace = []string{
 		"f-prd",
 		"e-prd",
+		"m-prd",
+		"s-prd",
 		"gm-prd",
 		"prd",
 	}
